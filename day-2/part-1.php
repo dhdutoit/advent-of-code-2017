@@ -19,14 +19,31 @@ $puzzleInput =
 
 $fileName = 'part2-puzzle-input';
 $fileHandle = cleanSpreadsheetInput($puzzleInput, $fileName);
-getRowDifference($fileName);
+echo calculateChecksum($fileName) . "\n";
 
-function getRowDifference($file)
+function calculateChecksum($fileName)
 {
-    $handle = fopen($file, 'a+');
-    while (!feof($handle)) {
-        echo fgets($handle) . "\n";
+    $totals = [];
+    $rows = getRows($fileName);
+
+    foreach ($rows as $valueList) {
+        $valueList = array_map('trim', $valueList);
+        $totals[] = max($valueList) - min($valueList);
     }
+
+    return array_sum($totals);
+}
+
+// get the rows from the file and change to arrays
+function getRows($fileName): array
+{
+    $rows = [];
+    $handle = fopen($fileName, 'a+');
+    while (!feof($handle)) {
+        $rows[] = explode("\t", fgets($handle));
+    }
+
+    return $rows;
 }
 
 // return handle for later processing
